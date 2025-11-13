@@ -14,8 +14,17 @@ title <- "Autism_Visunet"
 Autism_Visunet <- visunet(rules)
 
 for (net_name in names(Autism_Visunet)) {
+  try(deleteNetwork(net_name), silent=TRUE)
   network <- Autism_Visunet[[net_name]]
   colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
   colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
   createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
+
+  style.name = paste(net_name, '_style')
+  defaults <- list(NODE_SHAPE="circle")
+  nodeSize <- mapVisualProperty('node size','meanSupp','c',c(min(network$nodes$meanSupp),max(network$nodes$meanSupp)), c("30","75"))
+  nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
+  try(deleteVisualStyle(style.name), silent=TRUE)
+  createVisualStyle(style.name, defaults, list(nodeSize, nodeFills))
+  setVisualStyle(style.name)
 }
