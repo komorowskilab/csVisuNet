@@ -26,7 +26,10 @@ for (net_name in names(Autism_Visunet)) {
   nodeSize <- mapVisualProperty('node size','meanSupp','c',c(min(network$nodes$meanSupp),max(network$nodes$meanSupp)), c("30","75"))
   nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
+  nodeBorderColor <- mapVisualProperty('node border paint', 'color.border', 'p')
+  edgeLabels <- mapVisualProperty('edge label','title','p')
+  edgeVisibility <- mapVisualProperty('edge label transparency','selected','d', c('true', 'false'), c(255,0))
   try(deleteVisualStyle(style.name), silent=TRUE)
-  createVisualStyle(style.name, defaults, list(nodeSize, nodeFills, nodeLabels, nodeBorderWidth))
+  createVisualStyle(style.name, defaults, list(nodeSize, nodeFills, nodeLabels, nodeBorderWidth, nodeBorderColor, edgeLabels, edgeVisibility))
   setVisualStyle(style.name)
 }
