@@ -52,6 +52,11 @@ for (net_name in names(Autism_Visunet)) {
   setVisualStyle(style.name)
 }
 
-## Slidern för MeanAccuracy 
-net_suid <- getNetworkSuid(title = "all") #hittar SUID för det specifika nätverket
-makeMeanAccuracySlider(network = net_suid) #denna funktion tar integer som input
+## Slidern för Mean Accuracy, Support, Decision coverage
+source("~/Documents/GitHub/VisuNet.v.1.1/Scripts (Should be integrated later)/MeanSuppSlider.R")
+source("~/Documents/GitHub/VisuNet.v.1.1/Scripts (Should be integrated later)/MeanAccSlider.R")
+source("~/Documents/GitHub/VisuNet.v.1.1/Scripts (Should be integrated later)/meanDecisionCoverage.R")
+net_suid <- getNetworkSuid(title = "all") #hittar SUID för nätverket som innehåller alla noder
+makeMeanAccuracySlider(network = net_suid) 
+makeMeanSupportSlider(network = net_suid) 
+makeMeanDecCoverageSlider(network = net_suid) 
