@@ -160,10 +160,10 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
         hr(),
         sliderInput("accuracy", ("Min Accuracy"),
                     min = 0, max = 1, value = minAcc, step = 0.01),
-        
+
         uiOutput("FiltrParam"),
         uiOutput("value_slider"),
-        
+
         numericInput("TopNodes", label = ("Show top n nodes"), value = 0),
         selectInput("NodeColor",label = ("Color of nodes"), choices =  c('Accuracy value' = 'A','Discretization Levels' = 'DL'), selected = NodeColorType),
         actionButton("run", "Run"),
@@ -359,3 +359,4 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
     })
   }
   runGadget(ui, server, viewer = browserViewer())
+}
