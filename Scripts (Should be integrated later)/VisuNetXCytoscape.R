@@ -15,14 +15,20 @@ Autism_Visunet <- visunet(rules)
 
 cytoscapePing() #För eventuella problem med connection till Cytoscape
 
+
+
+clearCollection(title)
+
+
 for (net_name in names(Autism_Visunet)) {
-  try(deleteNetwork(net_name), silent=TRUE)
+
   network <- Autism_Visunet[[net_name]]
   colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
   colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
   createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
-  style.name = paste(net_name, '_style')
+
+  style.name = paste(title, net_name, '_style')
   defaults <- list(NODE_SHAPE="circle")
 
   # Node styles
@@ -55,7 +61,7 @@ for (net_name in names(Autism_Visunet)) {
       "Mean decision coverage filter"
     ),
     type   = "ALL",    # ALL = AND, ANY = OR
-    hide   = TRUE, # Vi vill att de som inte matchar filtret ska gömmas
+    hide   = FALSE,
     network = net_suid,
     apply  = FALSE     # bara skapa, inte köra direkt
   )
