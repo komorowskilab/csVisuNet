@@ -12,6 +12,7 @@ rules <- autconJohnson$main
 title <- "Autism_Visunet"
 
 Autism_Visunet <- visunet(rules)
+visunetcyto(rules)
 
 cytoscapePing() #För eventuella problem med connection till Cytoscape
 
