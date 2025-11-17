@@ -14,6 +14,6 @@ createStyle = function(stylename) {
   edgeVisibility <- mapVisualProperty('edge label transparency','selected','d', c('true', 'false'), c(255,0))
   edgeWidth <- mapVisualProperty('edge width', 'width', 'p')
 
-  try(deleteVisualStyle(style.name), silent=TRUE)
-  createVisualStyle(style.name, defaults, list(nodeSize, nodeFills, nodeLabels, nodeBorderWidth, nodeBorderColor, edgeColor, edgeLabels, edgeVisibility, edgeWidth))
+  try(deleteVisualStyle(stylename), silent=TRUE)
+  createVisualStyle(stylename, defaults, list(nodeSize, nodeFills, nodeLabels, nodeBorderWidth, nodeBorderColor, edgeColor, edgeLabels, edgeVisibility, edgeWidth))
 }

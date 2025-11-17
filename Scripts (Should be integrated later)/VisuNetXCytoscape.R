@@ -30,7 +30,7 @@ for (net_name in names(Autism_Visunet)) {
 
 
   style_name = paste(title, net_name, '_style')
-  createSyle(style_name)
+  createStyle(style_name)
 
   setVisualStyle(style_name)
 
