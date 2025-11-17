@@ -1,5 +1,5 @@
 createStyle = function(stylename) {
-  defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,C,c,0.00,10.00")
+  defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,C,c,0.00,10.00", EDGE_STROKE_SELECTED_PAINT="yellow")
 
   # Node styles
   nodeLabels <- mapVisualProperty('node label','label','p')
