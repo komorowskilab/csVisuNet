@@ -1,24 +1,24 @@
 makeMeanDecCoverageSlider <- function(network = NULL) {
-  
+
   if (is.null(network)) {
-    network <- getNetworkSuid()  
+    network <- getNetworkSuid()
   }
-  
+
   meanCov_df <- getTableColumns(
     table   = "node",
     columns = "meanDecisionCoverage",
     network = network
   )
-  
+
   meanCov <- meanCov_df$meanDecisionCoverage
   meanCov <- meanCov[!is.na(meanCov)]
-  
+
   if (length(meanCov) == 0) {
     stop("Det finns inga värden i kolumnen 'meanDecisionCoverage'.")
   }
-  
+
   rng <- range(meanCov)
-  
+
   createColumnFilter(
     filter.name = "Mean decision coverage filter",
     column      = "meanDecisionCoverage",
@@ -29,6 +29,6 @@ makeMeanDecCoverageSlider <- function(network = NULL) {
     network     = network,
     apply       = FALSE
   )
-  
+
   message("Filter 'Mean decision coverage filter' skapat!")
 }
