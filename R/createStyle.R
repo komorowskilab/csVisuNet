@@ -3,7 +3,7 @@ createStyle = function(stylename) {
 
   # Node styles
   nodeLabels <- mapVisualProperty('node label','label','p')
-  nodeSize <- mapVisualProperty('node size','meanSupp','c',c(min(network$nodes$meanSupp),max(network$nodes$meanSupp)), c("30","75"))
+  nodeSize <- mapVisualProperty('node size','value','c', c(min(network$nodes$value),max(network$nodes$value)), c(20, 60))
   nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
   nodeBorderColor <- mapVisualProperty('node border paint', 'color.border', 'p')
