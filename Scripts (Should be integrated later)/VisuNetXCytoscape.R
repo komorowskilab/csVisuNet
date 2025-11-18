@@ -26,7 +26,7 @@ for (net_name in names(Autism_Visunet)) {
 
   network <- Autism_Visunet[[net_name]]
   network <- restructureNetworkDF(network)
-  createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
+  net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
 
   style_name = paste(title, net_name, '_style')
@@ -34,7 +34,6 @@ for (net_name in names(Autism_Visunet)) {
 
   setVisualStyle(style_name)
 
-  net_suid <- getNetworkSuid(title = net_name)
   makeMeanAccuracySlider(network = net_suid)
   makeMeanSupportSlider(network = net_suid)
   makeMeanDecCoverageSlider(network = net_suid)
