@@ -159,7 +159,7 @@ visunetcyto = function(ruleSet, title, type ="RDF",  NodeColorType = "DL", NodeS
   RulesFiltr =  filtration_rules(rules, minAcc, NodeSizeMetric, filter_value)
   data = generate_object(decs, RulesFiltr, type, TopNodes, NodeSizeMetric, NodeColorType , EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
   if(addGO) {
-    data <- addGOannotations(data_input, GO_ontology)
+    data <- addGOannotations(data, GO_ontology)
   }
 
   clearCollection(title)
