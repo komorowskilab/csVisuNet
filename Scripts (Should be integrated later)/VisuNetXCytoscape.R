@@ -11,7 +11,7 @@ rules <- autconJohnson$main
 
 title <- "Autism_Visunet"
 
-visunetcyto(rules, title, addGO = TRUE) # test of function to bypass all of visunet visualizations (should do all below without launching browser)
+visunetcyto(rules, title, addGO = TRUE) # integration of everything in copy of visunet file
 
 Autism_Visunet <- visunet(rules)
 
