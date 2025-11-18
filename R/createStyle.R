@@ -1,12 +1,14 @@
 createStyle = function(stylename, network) {
-  defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,C,c,0.00,10.00", EDGE_STROKE_SELECTED_PAINT="yellow")
+  defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,NW,l,0.00,10.00", EDGE_STROKE_SELECTED_PAINT="yellow")
 
   # Node styles
-  nodeLabels <- mapVisualProperty('node label','label','p')
+  nodePopup <- mapVisualProperty('node label','title','p')
+  nodePopupVisibility <- mapVisualProperty('node label transparency','selected','d', c('true', 'false'), c(255,0))
   nodeSize <- mapVisualProperty('node size','value','c', c(min(network$nodes$value),max(network$nodes$value)), c(20, 60))
   nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
   nodeBorderColor <- mapVisualProperty('node border paint', 'color.border', 'p')
+  nodeLabels <- mapVisualProperty('node customgraphics 1', 'popup', 'p')
 
   # Edge styles
   edgeColor <- mapVisualProperty('edge stroke unselected paint','color','p')
@@ -15,5 +17,10 @@ createStyle = function(stylename, network) {
   edgeWidth <- mapVisualProperty('edge width', 'width', 'p')
 
   try(deleteVisualStyle(stylename), silent=TRUE)
-  createVisualStyle(stylename, defaults, list(nodeSize, nodeFills, nodeLabels, nodeBorderWidth, nodeBorderColor, edgeColor, edgeLabels, edgeVisibility, edgeWidth))
+  createVisualStyle(stylename, defaults, list(nodeSize, nodeFills, nodeLabels,
+      nodeBorderWidth, nodeBorderColor, edgeColor, edgeLabels, edgeVisibility,
+      edgeWidth, nodePopup, nodePopupVisibility))
+
+  setNodeCustomPosition(nodeAnchor = "S", graphicAnchor = "N", yOffset = 5, slot = 1, style.name=stylename)
+
 }

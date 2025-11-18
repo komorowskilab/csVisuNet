@@ -162,13 +162,13 @@ visunetcyto = function(ruleSet, title, type ="RDF",  NodeColorType = "DL", NodeS
     data <- addGOannotations(data, GO_ontology)
   }
 
+
   clearCollection(title)
 
   for (net_name in names(data)) {
 
     network <- data[[net_name]]
-    colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
-    colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
+    network <- restructureNetworkDF(network)
     createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
 
