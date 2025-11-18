@@ -127,7 +127,7 @@
 #' vis_out <- visunet(rules, type = "L")
 #'
 
-visunetcyto = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R', EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(), addGO = FALSE, GO_ontology = "MF", NodeSize = "sum"){
+visunetcyto = function(ruleSet, title, type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R', EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(), addGO = FALSE, GO_ontology = "MF", NodeSize = "sum"){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
@@ -162,20 +162,18 @@ visunetcyto = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetr
     data <- addGOannotations(data_input, GO_ontology)
   }
 
-  title = "test"
-
   clearCollection(title)
 
   for (net_name in names(data)) {
 
-    network <- Autism_Visunet[[net_name]]
+    network <- data[[net_name]]
     colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
     colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
     createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
 
     style_name = paste(title, net_name, '_style')
-    createSyle(style_name)
+    createStyle(style_name, network)
 
     setVisualStyle(style_name)
 

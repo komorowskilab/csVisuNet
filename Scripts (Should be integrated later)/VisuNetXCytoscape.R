@@ -11,15 +11,13 @@ rules <- autconJohnson$main
 
 title <- "Autism_Visunet"
 
+visunetcyto(rules, title, addGO = TRUE) # test of function to bypass all of visunet visualizations (should do all below without launching browser)
+
 Autism_Visunet <- visunet(rules)
-visunetcyto(rules)
 
 cytoscapePing() #För eventuella problem med connection till Cytoscape
 
-
-
 clearCollection(title)
-
 
 for (net_name in names(Autism_Visunet)) {
 
@@ -30,7 +28,7 @@ for (net_name in names(Autism_Visunet)) {
 
 
   style_name = paste(title, net_name, '_style')
-  createStyle(style_name)
+  createStyle(style_name, network)
 
   setVisualStyle(style_name)
 

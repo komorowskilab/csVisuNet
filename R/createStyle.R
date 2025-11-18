@@ -1,4 +1,4 @@
-createStyle = function(stylename) {
+createStyle = function(stylename, network) {
   defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,C,c,0.00,10.00", EDGE_STROKE_SELECTED_PAINT="yellow")
 
   # Node styles
