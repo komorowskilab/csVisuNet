@@ -3,57 +3,113 @@ library(devtools)
 
 load_all("/Users/ibraheem/Desktop/visu_to_cyto/VisuNet.v.1.1")
 
-if (!exists("vis")) vis <- readRDS("visunet_headless.rds")
-
-title <- "Autism_VisuNet"
-
-rename_edges <- function(df) {
-  if (is.null(df) || !nrow(df)) return(df)
-  names(df)[names(df) == "from"] <- "source"
-  names(df)[names(df) == "to"]   <- "target"
-  df
-}
-map_if <- function(ok, vp, col) if (isTRUE(ok)) mapVisualProperty(vp, col, 'p') else NULL
-
-for (net_name in names(vis)) {
-  net <- vis[[net_name]]
-  if (is.null(net) || is.null(net$nodes)) next
+# Skapar nätverk i Cytoscape från VisuNet regler
+visunetcyto <- function(ruleSet, title,
+                        type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC",
+                        EdgeColor = 'R', EdgeWidth = 10,
+                        CustObjectNodes = list(), CustObjectEdges = list(),
+                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum") {
   
-  nodes <- net$nodes
-  edges <- rename_edges(net$edges)
+  # Förbered regler
+  rules <- ruleSet
+  rules <- data_input(rules, type)
+  rules_10per_param <- filtration_rules_10per(rules)
   
-  try(deleteNetwork(net_name), silent = TRUE)
-  if (!is.null(edges) && nrow(edges) > 0) {
-    createNetworkFromDataFrames(nodes, edges, title = net_name, collection = title)
+  # Gränser för filtrering
+  minAcc <- 0
+  minSupp <- rules_10per_param$minSupp
+  minDecisionCoverage <- rules_10per_param$minDecisionCoverage
+  filter_value <- if (minDecisionCoverage == 0) minSupp else minDecisionCoverage
+  if (minDecisionCoverage == 0) NodeSizeMetric <- "S"
+  
+  TopNodes <- 0  
+  decs <- unique(as.matrix(rules$decision))  # unika beslut
+  
+  # Filtrera regler och bygg objekt för nätverk
+  RulesFiltr <- filtration_rules(rules, minAcc, NodeSizeMetric, filter_value)
+  data <- generate_object(decs, RulesFiltr, type, TopNodes,
+                          NodeSizeMetric, NodeColorType, EdgeColor, EdgeWidth,
+                          CustObjectNodes, CustObjectEdges, NodeSize)
+  
+  if (addGO) data <- addGOannotations(data, GO_ontology)
+  
+  clearCollection(title)
+  
+  # Spara id:n för autism- och control-noder (om de finns)
+  ids_autism <- if (!is.null(data$autism) && !is.null(data$autism$nodes)) {
+    data$autism$nodes$id
   } else {
-    createNetworkFromDataFrames(nodes = nodes, title = net_name, collection = title)
+    character(0)
   }
   
-  style.name <- paste0(net_name, "_style")
-  defaults   <- list(NODE_SHAPE = "circle", EDGE_LABEL = "")
-  
-  nodeLabels    <- mapVisualProperty('node label', 'label', 'p')
-  nodeFills     <- mapVisualProperty('node fill color', 'color.background', 'p')
-  nodeBorderW   <- mapVisualProperty('node border width', 'borderWidth', 'p')
-  nodeBorderCol <- mapVisualProperty('node border paint', 'color.border', 'p')
-  
-  if ("meanSupp" %in% names(nodes)) {
-    nodeSize <- mapVisualProperty('node size', 'meanSupp', 'c',
-                                  range(nodes$meanSupp, finite = TRUE), c("30","75"))
+  ids_control <- if (!is.null(data$control) && !is.null(data$control$nodes)) {
+    data$control$nodes$id
   } else {
-    nodeSize <- mapVisualProperty('node size', 'value', 'c',
-                                  range(nodes$value, finite = TRUE), c("30","75"))
+    character(0)
   }
   
-  edgeColor <- map_if(!is.null(edges) && "color" %in% names(edges),
-                      'edge stroke unselected paint', 'color')
-  edgeWidth <- map_if(!is.null(edges) && "width" %in% names(edges),
-                      'edge width', 'width')
+  # Byter kolumnnamn från/to till source/target
+  rename_edges <- function(df) {
+    if (is.null(df) || nrow(df) == 0) return(df)
+    names(df)[names(df) == "from"] <- "source"
+    names(df)[names(df) == "to"]   <- "target"
+    df
+  }
   
-  try(deleteVisualStyle(style.name), silent = TRUE)
-  createVisualStyle(style.name, defaults,
-                    Filter(Negate(is.null),
-                           list(nodeLabels, nodeFills, nodeBorderW, nodeBorderCol, nodeSize,
-                                edgeColor, edgeWidth)))
-  setVisualStyle(style.name)
+  # Säkerställ att varje nod har ett beslut (decision)
+  ensure_decision <- function(nodes, net_name) {
+    # Om decision redan finns, gör inget
+    if (any(names(nodes) == "decision")) return(nodes)
+    
+    # Om hela nätverket är autism eller control
+    if (net_name == "autism" || net_name == "control") {
+      nodes$decision <- net_name
+      return(nodes)
+    }
+    
+    # Kolla om nod-id finns i autism- eller control-listorna
+    in_autism  <- match(nodes$id, ids_autism,  nomatch = 0) > 0
+    in_control <- match(nodes$id, ids_control, nomatch = 0) > 0
+    
+    # Standard: blandat
+    nodes$decision <- "mixed"
+    # Endast autism
+    nodes$decision[in_autism  & !in_control] <- "autism"
+    # Endast control
+    nodes$decision[in_control & !in_autism]  <- "control"
+    
+    nodes
+  }
+  
+  # Gå igenom varje nätverk i data-listan
+  for (net_name in names(data)) {
+    
+    network <- data[[net_name]]
+    
+    network <- if (exists("restructureNetworkDF")) restructureNetworkDF(network) else network
+    
+    network$edges <- rename_edges(network$edges)
+    network$nodes <- ensure_decision(network$nodes, net_name)
+    
+    # Skapa nätverket i Cytoscape
+    net_suid <- createNetworkFromDataFrames(network$nodes, network$edges,
+                                            title = net_name, collection = title)
+    
+    # Skapa och sätt stil
+    style_name <- paste(title, net_name, "_style")
+    createStyle(style_name, network)
+    setVisualStyle(style_name)
+    
+    # Sliders för filtrering i Cytoscape
+    makeMeanAccuracySlider(network = net_suid)
+    makeMeanSupportSlider(network = net_suid)
+    makeMeanDecCoverageSlider(network = net_suid)
+    
+    # Kombinera filtren 
+    createCompositeFilter(
+      filter.name = "meanAcc + meanSupp + meanDecisionCoverage",
+      filter.list = c("meanAcc filter","Mean support filter","Mean decision coverage filter"),
+      type = "ALL", hide = FALSE, network = net_suid, apply = FALSE
+    )
+  }
 }
