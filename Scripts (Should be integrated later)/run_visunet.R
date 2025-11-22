@@ -1,12 +1,20 @@
 library(devtools)
-library(R.ROSETTA)
+library(RCy3)
 
 load_all("/Users/ibraheem/Desktop/visu_to_cyto/VisuNet.v.1.1")
+source("/Users/ibraheem/Desktop/visu_to_cyto/VisuNet.v.1.1/visu_to_cyto.R")
 
-options(visunet.headless = TRUE,
-        shiny.launch.browser = FALSE, viewer = NULL, browser = function(...) {})
+cytoscapePing()  # kolla att Cytoscape är igång
 
-ros <- rosetta(autcon)
-vis <- visunet(ros$main, addGO = TRUE, GO_ontology = "MF", NodeSize = "sum")
+# Ladda VisuNet objektet från tidigare körning
+if (!exists("vis")) {
+  vis <- readRDS("visunet_headless.rds")
+}
 
-saveRDS(vis, "visunet_headless.rds")
+# Skicka VisuNet objektet till Cytoscape
+visunetcyto(
+  vis   = vis,
+  title = "Autism_VisuNet_optA"
+)
+
+# Klart, nätverken ska nu finnas i Cytoscape
