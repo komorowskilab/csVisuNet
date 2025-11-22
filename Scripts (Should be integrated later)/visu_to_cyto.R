@@ -1,115 +1,138 @@
-library(RCy3)
-library(devtools)
-
-load_all("/Users/ibraheem/Desktop/visu_to_cyto/VisuNet.v.1.1")
-
-# Skapar nätverk i Cytoscape från VisuNet regler
-visunetcyto <- function(ruleSet, title,
-                        type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC",
-                        EdgeColor = 'R', EdgeWidth = 10,
-                        CustObjectNodes = list(), CustObjectEdges = list(),
-                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum") {
+visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
   
-  # Förbered regler
-  rules <- ruleSet
-  rules <- data_input(rules, type)
-  rules_10per_param <- filtration_rules_10per(rules)
-  
-  # Gränser för filtrering
-  minAcc <- 0
-  minSupp <- rules_10per_param$minSupp
-  minDecisionCoverage <- rules_10per_param$minDecisionCoverage
-  filter_value <- if (minDecisionCoverage == 0) minSupp else minDecisionCoverage
-  if (minDecisionCoverage == 0) NodeSizeMetric <- "S"
-  
-  TopNodes <- 0  
-  decs <- unique(as.matrix(rules$decision))  # unika beslut
-  
-  # Filtrera regler och bygg objekt för nätverk
-  RulesFiltr <- filtration_rules(rules, minAcc, NodeSizeMetric, filter_value)
-  data <- generate_object(decs, RulesFiltr, type, TopNodes,
-                          NodeSizeMetric, NodeColorType, EdgeColor, EdgeWidth,
-                          CustObjectNodes, CustObjectEdges, NodeSize)
-  
-  if (addGO) data <- addGOannotations(data, GO_ontology)
-  
-  clearCollection(title)
-  
-  # Spara id:n för autism- och control-noder (om de finns)
-  ids_autism <- if (!is.null(data$autism) && !is.null(data$autism$nodes)) {
-    data$autism$nodes$id
-  } else {
-    character(0)
-  }
-  
-  ids_control <- if (!is.null(data$control) && !is.null(data$control$nodes)) {
-    data$control$nodes$id
-  } else {
-    character(0)
-  }
-  
-  # Byter kolumnnamn från/to till source/target
-  rename_edges <- function(df) {
+  rename_edges <- function(df){
     if (is.null(df) || nrow(df) == 0) return(df)
     names(df)[names(df) == "from"] <- "source"
     names(df)[names(df) == "to"]   <- "target"
     df
   }
   
-  # Säkerställ att varje nod har ett beslut (decision)
-  ensure_decision <- function(nodes, net_name) {
-    # Om decision redan finns, gör inget
-    if (any(names(nodes) == "decision")) return(nodes)
+  createStyle <- function(style_name, net){
+    nodes <- net$nodes
+    edges <- net$edges
     
-    # Om hela nätverket är autism eller control
-    if (net_name == "autism" || net_name == "control") {
-      nodes$decision <- net_name
-      return(nodes)
-    }
+    defaults <- list(NODE_SHAPE = "circle", EDGE_LABEL = "")
+    nodeLabel <- mapVisualProperty("node label", "label", "p")
     
-    # Kolla om nod-id finns i autism- eller control-listorna
-    in_autism  <- match(nodes$id, ids_autism,  nomatch = 0) > 0
-    in_control <- match(nodes$id, ids_control, nomatch = 0) > 0
+    # Storlek bara baserad på meanSupp (value behövs inte)
+    nodeSize <- mapVisualProperty("node size", "meanSupp", "c",
+                                  range(nodes$meanSupp, finite = TRUE),
+                                  c("30", "75"))
     
-    # Standard: blandat
-    nodes$decision <- "mixed"
-    # Endast autism
-    nodes$decision[in_autism  & !in_control] <- "autism"
-    # Endast control
-    nodes$decision[in_control & !in_autism]  <- "control"
+    nodeFill  <- if ("color.background" %in% names(nodes))
+      mapVisualProperty("node fill color", "color.background", "p") else NULL
+    nodeBW    <- if ("borderWidth" %in% names(nodes))
+      mapVisualProperty("node border width", "borderWidth", "p") else NULL
+    nodeBC    <- if ("color.border" %in% names(nodes))
+      mapVisualProperty("node border paint", "color.border", "p") else NULL
+    edgeCol   <- if (!is.null(edges) && "color" %in% names(edges))
+      mapVisualProperty("edge stroke unselected paint", "color", "p") else NULL
+    edgeW     <- if (!is.null(edges) && "width" %in% names(edges))
+      mapVisualProperty("edge width", "width", "p") else NULL
     
-    nodes
+    if (style_name %in% getVisualStyleNames()) deleteVisualStyle(style_name)
+    
+    createVisualStyle(
+      style_name,
+      defaults,
+      Filter(Negate(is.null),
+             list(nodeLabel, nodeFill, nodeBW, nodeBC, nodeSize, edgeCol, edgeW))
+    )
   }
   
-  # Gå igenom varje nätverk i data-listan
-  for (net_name in names(data)) {
+  # Id-listor för noder som tillhör autism/control-näten
+  idsA <- if (!is.null(vis$autism$nodes))  vis$autism$nodes$id  else character(0)
+  idsC <- if (!is.null(vis$control$nodes)) vis$control$nodes$id else character(0)
+  
+  # Endast kolumner som används av VisuNet + färg/stil + beslut
+  # (vi tar inte med value eller title här för att hålla tabellen renare)
+  node_cols_keep <- c(
+    "id",                     # behövs för createNetworkFromDataFrames()
+    "label",                  # nodlabel som visas i Cytoscape
+    "decision",               # beslut (autism/control/mixed) per nod
+    "meanAcc",                # medel-accuracy (för tolkning/ev. filter)
+    "meanSupp",               # medel-support (styr nodstorlek i createStyle)
+    "meanDecisionCoverage",   # medel decision coverage
+    "color.background",       # nodfärg från VisuNet
+    "borderWidth",            # kanttjocklek runt noden
+    "color.border"            # kantfärg runt noden
+  )
+  
+  # Endast kant-kolumner vi faktiskt använder i stil och tolkning
+  edge_cols_keep <- c(
+    "source",   # från 'from' → källa
+    "target",   # från 'to'   → mål
+    "color",    # kantfärg
+    "width",    # kantbredd
+    "label2"    # extra etikett för kanter (t.ex. vikt/info)
+  )
+  
+  for (net_name in names(vis)) {
+    net <- vis[[net_name]]
+    if (is.null(net) || is.null(net$nodes)) next
     
-    network <- data[[net_name]]
+    nodes <- net$nodes
+    edges <- rename_edges(net$edges)
     
-    network <- if (exists("restructureNetworkDF")) restructureNetworkDF(network) else network
+    # Lägg till decision om saknas
+    # - om nätet heter "autism"/"control" sätts alla noder till det beslutet
+    # - annars kollar vi om nod-id finns i autism- respektive control-nät
+    #   och märker dem som "autism", "control" eller "mixed"
+    if (!("decision" %in% names(nodes))) {
+      if (net_name %in% c("autism", "control")) {
+        nodes$decision <- net_name
+      } else {
+        inA <- nodes$id %in% idsA      # noden finns i autism-nätet
+        inC <- nodes$id %in% idsC      # noden finns i control-nätet
+        nodes$decision <- ifelse(inA & !inC, "autism",
+                                 ifelse(inC & !inA, "control", "mixed"))
+      }
+    }
     
-    network$edges <- rename_edges(network$edges)
-    network$nodes <- ensure_decision(network$nodes, net_name)
+    # Plocka bara ut de kolumner vi vill visa/skicka till Cytoscape
+    nodes_cyto <- nodes[, intersect(node_cols_keep, names(nodes)), drop = FALSE]
+    edges_cyto <- if (!is.null(edges) && nrow(edges) > 0) {
+      edges[, intersect(edge_cols_keep, names(edges)), drop = FALSE]
+    } else {
+      NULL
+    }
     
-    # Skapa nätverket i Cytoscape
-    net_suid <- createNetworkFromDataFrames(network$nodes, network$edges,
-                                            title = net_name, collection = title)
+    # Ta bort ev. gammalt nätverk med samma namn
+    if (net_name %in% getNetworkList()) deleteNetwork(net_name)
     
-    # Skapa och sätt stil
-    style_name <- paste(title, net_name, "_style")
-    createStyle(style_name, network)
-    setVisualStyle(style_name)
+    # Skapa nätverket i Cytoscape med de slimmade tabellerna
+    if (!is.null(edges_cyto) && nrow(edges_cyto) > 0) {
+      net_suid <- createNetworkFromDataFrames(nodes_cyto, edges_cyto,
+                                              title = net_name,
+                                              collection = title)
+    } else {
+      net_suid <- createNetworkFromDataFrames(nodes = nodes_cyto,
+                                              title = net_name,
+                                              collection = title)
+    }
     
-    # Sliders för filtrering i Cytoscape
-    makeMeanAccuracySlider(network = net_suid)
-    makeMeanSupportSlider(network = net_suid)
-    makeMeanDecCoverageSlider(network = net_suid)
+    # Rensa bort onödiga kolumner från tabellerna inne i Cytoscape
+    node_cols <- getTableColumnNames(table = "node", network = net_suid)
+    edge_cols <- getTableColumnNames(table = "edge", network = net_suid)
     
-    # Kombinera filtren 
-    createCompositeFilter(
-      filter.name = "meanAcc + meanSupp + meanDecisionCoverage",
-      filter.list = c("meanAcc filter","Mean support filter","Mean decision coverage filter"),
-      type = "ALL", hide = FALSE, network = net_suid, apply = FALSE
-    )
+    # Ta bort id, value, title från nod-tabellen om de finns
+    # (Cytoscape har egna id/name-kolumner så dessa blir bara dubbletter)
+    for (col in c("id", "value", "title")) {
+      if (col %in% node_cols) {
+        deleteTableColumn(col, table = "node", network = net_suid)
+      }
+    }
+    
+    # Ta bort title + data.key.column från edge-tabellen om de finns
+    # (rensar hjälpkolumner som inte behövs i GUI:t)
+    for (col in c("title", "data.key.column")) {
+      if (col %in% edge_cols) {
+        deleteTableColumn(col, table = "edge", network = net_suid)
+      }
+    }
+    
+    style.name <- paste0(title, "_", net_name, "_style")
+    createStyle(style.name, list(nodes = nodes_cyto, edges = edges_cyto))
+    setVisualStyle(style.name)
   }
 }
