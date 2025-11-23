@@ -1,3 +1,6 @@
+#creates a minimal network in the collection we want, uses that network to find the ID of the collection to delete all previous networks in the collection
+
+
 clearCollection = function(title) {
   nodes <- data.frame(id=c("node 0","node 1"),
                       group=c("A","A"), # categorical strings
