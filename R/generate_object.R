@@ -25,8 +25,12 @@ generate_object = function(decs, rules, type, TopNodes, FiltrParam,
     all_rulesets <- list()
     
     for (d in decs) {
-      if (!is.null(AllNets[[d]]$nodes)) {
-        all_nodes <- rbind(all_nodes, AllNets[[d]]$nodes)
+      # --- Mattias: added back 'group' column to 'all' network
+      nodes_d <- AllNets[[d]]$nodes
+
+      if (!is.null(nodes_d)) {
+        nodes_d$group <- d
+        all_nodes <- rbind(all_nodes, nodes_d)
       }
       if (!is.null(AllNets[[d]]$edges)) {
         all_edges <- rbind(all_edges, AllNets[[d]]$edges)
