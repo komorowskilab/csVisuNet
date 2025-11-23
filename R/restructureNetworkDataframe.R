@@ -18,14 +18,14 @@ restructureNetworkDF <- function(network){
   "\nMean decision coverage: ", network$nodes$meanDecisionCoverage)
 
 
-  node_columns_to_keep <- c("id", "name", "color.background", "value",
+  node_columns_to_keep <- c("id", "name", "group", "color.background", "value",
                             "color.border", "borderWidth", "meanAcc",
                             "meanSupp", "meanDecisionCoverage", "title", "popup")
-  network$nodes <- network$nodes[node_columns_to_keep]
+  network$nodes <- network$nodes[intersect(node_columns_to_keep, names(network$nodes))]
 
   edge_columns_to_keep <- c("source", "target", "color", "width", "title")
 
-  network$edges <- network$edges[edge_columns_to_keep]
+  network$edges <- network$edges[intersect(edge_columns_to_keep, names(network$edges))]
 
   return(network)
 }
