@@ -163,6 +163,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
   }
 
 
+  # New stuff for cytoscape below, above uses original code to extract networks
   clearCollection(title)
 
   for (net_name in names(data)) {
