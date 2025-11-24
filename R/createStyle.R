@@ -8,8 +8,8 @@ createStyle = function(stylename, network) {
                    EDGE_LABEL_BACKGROUND_COLOR="gray",
                    EDGE_LABEL_POSITION="S,NW,l,0.00,10.00")
   # Node styles
-  nodePopup <- mapVisualProperty('node label','title','p')
-  nodePopupVisibility <- mapVisualProperty('node label transparency','selected','d', c('true', 'false'), c(255,0))
+  nodeTooltip <- mapVisualProperty('node label','title','p')
+  nodeTooltipVisibility <- mapVisualProperty('node label transparency','selected','d', c('true', 'false'), c(255,0))
   nodeSize <- mapVisualProperty('node size','value','c', c(min(network$nodes$value),max(network$nodes$value)), c(20, 60))
   nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
@@ -29,7 +29,7 @@ createStyle = function(stylename, network) {
 
   createVisualStyle(stylename, defaults, list(nodeSize, nodeFills, nodeLabels,
       nodeBorderWidth, nodeBorderColor, nodeBackground, edgeColor, edgeLabels, edgeVisibility,
-      edgeWidth, nodePopup, nodePopupVisibility, edgeBackground))
+      edgeWidth, nodeTooltip, nodeTooltipVisibility, edgeBackground))
 
   setNodeCustomPosition(nodeAnchor = "S", graphicAnchor = "N", yOffset = 5, slot = 1, style.name=stylename)
 
