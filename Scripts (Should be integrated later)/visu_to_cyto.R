@@ -40,12 +40,23 @@ visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
     )
   }
   
-  # Id-listor för noder som tillhör autism/control-näten
-  idsA <- if (!is.null(vis$autism$nodes))  vis$autism$nodes$id  else character(0)
-  idsC <- if (!is.null(vis$control$nodes)) vis$control$nodes$id else character(0)
+  # Nätverksnamn
+  all_nets <- names(vis)
   
-  # Endast kolumner som används av VisuNet + färg/stil + beslut
-  # (vi tar inte med value eller title här för att hålla tabellen renare)
+  # Beslutsnät: alla nät utom "all" som faktiskt har nodes
+  decision_nets <- all_nets[
+    all_nets != "all" &
+      vapply(vis, function(x) !is.null(x$nodes), logical(1))
+  ]
+  
+  # Lista med id:n per beslutsnät (A, B, autism, control, etc.)
+  decision_ids <- lapply(decision_nets, function(nm) vis[[nm]]$nodes$id)
+  names(decision_ids) <- decision_nets
+  
+  # Flagga: om inga beslutsnät hittas → fallback till "decision = net_name"
+  use_generic_decision <- length(decision_nets) == 0
+  
+  # Kolumner vi vill behålla för noder
   node_cols_keep <- c(
     "id",                     # behövs för createNetworkFromDataFrames()
     "label",                  # nodlabel som visas i Cytoscape
@@ -58,7 +69,7 @@ visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
     "color.border"            # kantfärg runt noden
   )
   
-  # Endast kant-kolumner vi faktiskt använder i stil och tolkning
+  # Kolumner vi vill behålla för kanter
   edge_cols_keep <- c(
     "source",   # från 'from' → källa
     "target",   # från 'to'   → mål
@@ -67,25 +78,43 @@ visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
     "label2"    # extra etikett för kanter (t.ex. vikt/info)
   )
   
-  for (net_name in names(vis)) {
+  for (net_name in all_nets) {
     net <- vis[[net_name]]
     if (is.null(net) || is.null(net$nodes)) next
     
     nodes <- net$nodes
     edges <- rename_edges(net$edges)
     
-    # Lägg till decision om saknas
-    # - om nätet heter "autism"/"control" sätts alla noder till det beslutet
-    # - annars kollar vi om nod-id finns i autism- respektive control-nät
-    #   och märker dem som "autism", "control" eller "mixed"
+    # Lägg till decision om kolumnen saknas
     if (!("decision" %in% names(nodes))) {
-      if (net_name %in% c("autism", "control")) {
+      
+      if (use_generic_decision) {
+        # Ingen info om beslutsnät → sätt beslut = nätverksnamnet
         nodes$decision <- net_name
+        
+      } else if (net_name %in% decision_nets) {
+        # Detta är ett "rent" beslutsnät (t.ex. autism, control, A, B)
+        nodes$decision <- net_name
+        
       } else {
-        inA <- nodes$id %in% idsA      # noden finns i autism-nätet
-        inC <- nodes$id %in% idsC      # noden finns i control-nätet
-        nodes$decision <- ifelse(inA & !inC, "autism",
-                                 ifelse(inC & !inA, "control", "mixed"))
+        # T.ex. "all" eller andra sammanslagna nät
+        # Bestäm beslut per nod utifrån vilka beslutsnät som innehåller nod-id
+        decisions_vec <- character(nrow(nodes))
+        
+        for (i in seq_len(nrow(nodes))) {
+          id_i <- nodes$id[i]
+          hits <- names(decision_ids)[
+            vapply(decision_ids, function(v) id_i %in% v, logical(1))
+          ]
+          
+          if (length(hits) == 1) {
+            decisions_vec[i] <- hits
+          } else {
+            decisions_vec[i] <- "mixed"
+          }
+        }
+        
+        nodes$decision <- decisions_vec
       }
     }
     
@@ -111,20 +140,16 @@ visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
                                               collection = title)
     }
     
-    # Rensa bort onödiga kolumner från tabellerna inne i Cytoscape
+    # Rensa bort onödiga kolumner från tabellerna inne i cytoscape
     node_cols <- getTableColumnNames(table = "node", network = net_suid)
     edge_cols <- getTableColumnNames(table = "edge", network = net_suid)
     
-    # Ta bort id, value, title från nod-tabellen om de finns
-    # (Cytoscape har egna id/name-kolumner så dessa blir bara dubbletter)
     for (col in c("id", "value", "title")) {
       if (col %in% node_cols) {
         deleteTableColumn(col, table = "node", network = net_suid)
       }
     }
     
-    # Ta bort title + data.key.column från edge-tabellen om de finns
-    # (rensar hjälpkolumner som inte behövs i GUI:t)
     for (col in c("title", "data.key.column")) {
       if (col %in% edge_cols) {
         deleteTableColumn(col, table = "edge", network = net_suid)
