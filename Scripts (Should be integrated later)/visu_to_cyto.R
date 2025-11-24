@@ -140,7 +140,7 @@ visunetcyto <- function(vis, title = "Autism_VisuNet_optA") {
                                               collection = title)
     }
     
-    # Rensa bort onödiga kolumner från tabellerna inne i Cytoscape
+    # Rensa bort onödiga kolumner från tabellerna inne i cytoscape
     node_cols <- getTableColumnNames(table = "node", network = net_suid)
     edge_cols <- getTableColumnNames(table = "edge", network = net_suid)
     

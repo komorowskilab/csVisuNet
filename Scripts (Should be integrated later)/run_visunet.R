@@ -50,4 +50,4 @@ visunetcyto(
   title = "Autism_VisuNet_optA"
 )
 
-# Klart: Nätverken ska nu finnas i Cytoscape
+# Nätverken ska nu finnas i Cytoscape
