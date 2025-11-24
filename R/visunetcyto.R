@@ -127,7 +127,7 @@
 #' vis_out <- visunet(rules, type = "L")
 #'
 
-visunetcyto = function(ruleSet, title, type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R', EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(), addGO = FALSE, GO_ontology = "MF", NodeSize = "sum"){
+visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R', EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(), addGO = FALSE, GO_ontology = "MF", NodeSize = "sum"){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
@@ -163,6 +163,7 @@ visunetcyto = function(ruleSet, title, type ="RDF",  NodeColorType = "DL", NodeS
   }
 
 
+  # New stuff for cytoscape below, above uses original code to extract networks
   clearCollection(title)
 
   for (net_name in names(data)) {

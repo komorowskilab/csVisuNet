@@ -8,4 +8,6 @@ ros <- rosetta(autcon)
 # VisuNet with GO annotations
 vis <- visunet(ros$main, addGO = TRUE, GO_ontology = "MF", NodeSize = "sum")
 
-#HEJHEJ
+# VisuNet in cytoscaoe
+# Have cytoscape app open on computer
+visunetcyto(ros$main, title="VisuNet Networks")
