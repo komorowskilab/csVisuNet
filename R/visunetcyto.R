@@ -173,6 +173,8 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
     net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
 
+
+    #styles
     style_name = paste(title, net_name, '_style')
     createStyle(style_name, network)
 
