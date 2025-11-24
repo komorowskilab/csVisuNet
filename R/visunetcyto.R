@@ -135,69 +135,60 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
   minAcc <- 0 #gör att accuracy sätts till 0 i Visunet
   minSupp <-  rules_10per_param$minSupp
   minDecisionCoverage <- rules_10per_param$minDecisionCoverage
-  filter_value = minDecisionCoverage
 
-  if(minDecisionCoverage == 0){
-    NodeSizeMetric = 'S'
-    choices_v <- 'Min Support'
-    names(choices_v) <- 'S'
-    choices_values <- minSupp
-    names(choices_values) <- 'S'
-    filter_value = minSupp
-  }else{
-    choices_v <- c('Min Decision Coverage', 'Min Support')
-    names(choices_v) <- c('DC', 'S' )
-    choices_values <- c(minDecisionCoverage, minSupp )
-    names(choices_values) <- c('DC', 'S')
-  }
-
+  value_slider = minDecisionCoverage
+  FiltrParam = NodeSizeMetric
   TopNodes = 0
+
   decs = unique(as.matrix(rules$decision))
   validate(
-    filter_rules(rules, minAcc, minSupp, NodeSizeMetric, filter_valuer)
+    filter_rules(rules, minAcc, minSupp, FiltrParam, value_slider)
   )
-  RulesFiltr =  filtration_rules(rules, minAcc, NodeSizeMetric, filter_value)
-  data = generate_object(decs, RulesFiltr, type, TopNodes, NodeSizeMetric, NodeColorType , EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
+  data = generate_object(decs, rules, type, TopNodes, FiltrParam, NodeColorType , EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
   if(addGO) {
     data <- addGOannotations(data, GO_ontology)
   }
 
 
   # New stuff for cytoscape below, above uses original code to extract networks
+
   clearCollection(title)
 
+  net_name="all"
+  network <- data[[net_name]]
+  network <- restructureNetworkDF(network)
+  net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
+
+
+  #styles
+  style_name = paste(title, net_name, '_style')
+  createStyle(style_name, network)
+
+  setVisualStyle(style_name)
+
+
+  #filters
+  makeMeanAccuracySlider(network = net_suid)
+  makeMeanSupportSlider(network = net_suid)
+  makeMeanDecCoverageSlider(network = net_suid)
+
+  createCompositeFilter(
+    filter.name = "meanAcc + meanSupp + meanDecisionCoverage",
+    filter.list = c(
+      "meanAcc filter",
+      "Mean support filter",
+      "Mean decision coverage filter"
+    ),
+    type   = "ALL",    # ALL = AND, ANY = OR
+    hide   = FALSE,
+    network = net_suid,
+    apply  = FALSE     # bara skapa, inte köra direkt
+  )
+
   for (net_name in names(data)) {
-
-    network <- data[[net_name]]
-    network <- restructureNetworkDF(network)
-    net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
-
-
-
-    #styles
-    style_name = paste(title, net_name, '_style')
-    createStyle(style_name, network)
-
-    setVisualStyle(style_name)
-
-    makeMeanAccuracySlider(network = net_suid)
-    makeMeanSupportSlider(network = net_suid)
-    makeMeanDecCoverageSlider(network = net_suid)
-
-    # Composite-filter som samlar alla tre i EN ruta
-    createCompositeFilter(
-      filter.name = "meanAcc + meanSupp + meanDecisionCoverage",
-      filter.list = c(
-        "meanAcc filter",
-        "Mean support filter",
-        "Mean decision coverage filter"
-      ),
-      type   = "ALL",    # ALL = AND, ANY = OR
-      hide   = FALSE,
-      network = net_suid,
-      apply  = FALSE     # bara skapa, inte köra direkt
-    )
+    if (net_name!="all"){
+      createSubnetwork(nodes=net_name, nodes.by.col = "group", subnetwork.name=net_name, network="all")
+    }
   }
-
-
+  hidePanel("SOUTH")
 }
