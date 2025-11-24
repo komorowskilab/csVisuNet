@@ -1,8 +1,9 @@
 library(R.ROSETTA)
 library(devtools)
+library(RCy3)
 
 # load version of VisuNet
-load_all("~/Documents/Forskningspraktik/VisuNet")
+load_all("~/Documents/GitHub/VisuNet.v.1.1")
 
 ros <- rosetta(autcon)
 # VisuNet with GO annotations

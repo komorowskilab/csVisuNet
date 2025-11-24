@@ -167,23 +167,9 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
   setVisualStyle(style_name)
 
 
-  #filters
-  makeMeanAccuracySlider(network = net_suid)
-  makeMeanSupportSlider(network = net_suid)
-  makeMeanDecCoverageSlider(network = net_suid)
-
-  createCompositeFilter(
-    filter.name = "meanAcc + meanSupp + meanDecisionCoverage",
-    filter.list = c(
-      "meanAcc filter",
-      "Mean support filter",
-      "Mean decision coverage filter"
-    ),
-    type   = "ALL",    # ALL = AND, ANY = OR
-    hide   = FALSE,
-    network = net_suid,
-    apply  = FALSE     # bara skapa, inte köra direkt
-  )
+  #filters -- New --
+  net_suid <- getNetworkSuid(title = "all")
+  filter_slides(network = net_suid)
 
   for (net_name in names(data)) {
     if (net_name!="all"){

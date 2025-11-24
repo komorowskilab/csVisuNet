@@ -4,7 +4,8 @@ if(!"RCy3" %in% installed.packages()){
     BiocManager::install("RCy3")
 }
 library(RCy3)
-load_all(path = "C://Users//tilda//OneDrive//Dokument//Tillämpad bioinformatik//VisuNet.v.1.1")
+load_all(path = "~/Documents/GitHub/VisuNet.v.1.1/Scripts (Should be integrated later)/VisuNetXCytoscape.R")
+~/Documents/GitHub/VisuNet.v.1.1/Scripts (Should be integrated later)/VisuNetXCytoscape.R
 
 autconJohnson <- rosetta(autcon, roc = TRUE, clroc = "autism")
 rules <- autconJohnson$main
@@ -13,6 +14,7 @@ title <- "Autism_Visunet"
 
 visunetcyto(rules, title, addGO = TRUE) # integration of everything in copy of visunet file
 
+# --
 Autism_Visunet <- visunet(rules)
 
 cytoscapePing() #För eventuella problem med connection till Cytoscape
