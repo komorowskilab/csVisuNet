@@ -7,6 +7,8 @@ restructureNetworkDF <- function(network){
     "label: attribute=NAME labelsize=12 color=black outline=false background=false"
   )
 
+  network$nodes$borderWidth <- network$nodes$borderWidth * 3
+
   network$edges$title <- paste0(
     "Edge: ", network$edges$source, ", ", network$edges$target,
     "\nConnection: ", round(network$edges$conn, 2)
