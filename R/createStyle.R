@@ -1,11 +1,11 @@
 createStyle = function(stylename, network) {
   defaults <- list(NODE_SHAPE="circle",
                    NODE_LABEL_POSITION="S,NW,l,0.00,10.00",
-                   NODE_LABEL_BACKGROUND_COLOR="gray",
+                   NODE_LABEL_BACKGROUND_COLOR="white",
                    NODE_LABEL_BACKGROUND_SHAPE="rectangle",
                    EDGE_LABEL_BACKGROUND_SHAPE="rectangle",
                    EDGE_STROKE_SELECTED_PAINT="yellow",
-                   EDGE_LABEL_BACKGROUND_COLOR="gray",
+                   EDGE_LABEL_BACKGROUND_COLOR="white",
                    EDGE_LABEL_POSITION="S,NW,l,0.00,10.00")
   # Node styles
   nodeTooltip <- mapVisualProperty('node label','title','p')
