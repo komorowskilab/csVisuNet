@@ -9,18 +9,18 @@ restructureNetworkDF <- function(network){
 
   network$edges$title <- paste0(
     "Edge: ", network$edges$source, ", ", network$edges$target,
-    "\nConnection: ", network$edges$conn
+    "\nConnection: ", round(network$edges$conn, 2)
   )
   network$nodes$title <- paste0(
   "Name: ", network$nodes$name, "\nEdges: ", network$nodes$NRules,
-  "\nNode connection: ", network$nodes$NodeConnection, "\nMean accuracy: ",
-  network$nodes$meanAcc, "\nMean support: ", network$nodes$meanSupp,
-  "\nMean decision coverage: ", network$nodes$meanDecisionCoverage)
-
+  "\nNode connection: ", round(network$nodes$NodeConnection, 2), "\nMean accuracy: ",
+  round(network$nodes$meanAcc, 2), "\nMean support: ", round(network$nodes$meanSupp, 2),
+  "\nMean decision coverage: ", round(network$nodes$meanDecisionCoverage, 2))
 
   node_columns_to_keep <- c("id", "name", "group", "color.background", "value",
                             "color.border", "borderWidth", "meanAcc",
                             "meanSupp", "meanDecisionCoverage", "title", "popup")
+
   network$nodes <- network$nodes[intersect(node_columns_to_keep, names(network$nodes))]
 
   edge_columns_to_keep <- c("source", "target", "color", "width", "title")
