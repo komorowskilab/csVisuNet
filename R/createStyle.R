@@ -1,6 +1,12 @@
 createStyle = function(stylename, network) {
-  defaults <- list(NODE_SHAPE="circle", NODE_LABEL_POSITION="S,NW,l,0.00,10.00", EDGE_STROKE_SELECTED_PAINT="yellow")
-
+  defaults <- list(NODE_SHAPE="circle",
+                   NODE_LABEL_POSITION="S,NW,l,0.00,10.00",
+                   NODE_LABEL_BACKGROUND_COLOR="gray",
+                   NODE_LABEL_BACKGROUND_SHAPE="rectangle",
+                   EDGE_LABEL_BACKGROUND_SHAPE="rectangle",
+                   EDGE_STROKE_SELECTED_PAINT="yellow",
+                   EDGE_LABEL_BACKGROUND_COLOR="gray",
+                   EDGE_LABEL_POSITION="S,NW,l,0.00,10.00")
   # Node styles
   nodePopup <- mapVisualProperty('node label','title','p')
   nodePopupVisibility <- mapVisualProperty('node label transparency','selected','d', c('true', 'false'), c(255,0))
@@ -9,17 +15,21 @@ createStyle = function(stylename, network) {
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
   nodeBorderColor <- mapVisualProperty('node border paint', 'color.border', 'p')
   nodeLabels <- mapVisualProperty('node customgraphics 1', 'popup', 'p')
+  nodeBackground <- mapVisualProperty('node label background transparency','selected','d', c('true', 'false'), c(255,0))
+
 
   # Edge styles
   edgeColor <- mapVisualProperty('edge stroke unselected paint','color','p')
   edgeLabels <- mapVisualProperty('edge label','title','p')
   edgeVisibility <- mapVisualProperty('edge label transparency','selected','d', c('true', 'false'), c(255,0))
   edgeWidth <- mapVisualProperty('edge width', 'width', 'p')
+  edgeBackground <- mapVisualProperty('edge label background transparency','selected','d', c('true', 'false'), c(255,0))
 
   try(deleteVisualStyle(stylename), silent=TRUE)
+
   createVisualStyle(stylename, defaults, list(nodeSize, nodeFills, nodeLabels,
-      nodeBorderWidth, nodeBorderColor, edgeColor, edgeLabels, edgeVisibility,
-      edgeWidth, nodePopup, nodePopupVisibility))
+      nodeBorderWidth, nodeBorderColor, nodeBackground, edgeColor, edgeLabels, edgeVisibility,
+      edgeWidth, nodePopup, nodePopupVisibility, edgeBackground))
 
   setNodeCustomPosition(nodeAnchor = "S", graphicAnchor = "N", yOffset = 5, slot = 1, style.name=stylename)
 
