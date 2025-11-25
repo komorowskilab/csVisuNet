@@ -149,7 +149,6 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
     data <- addGOannotations(data, GO_ontology)
   }
 
-
   # New stuff for cytoscape below, above uses original code to extract networks
 
   clearCollection(title)
@@ -177,4 +176,5 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
     }
   }
   hidePanel("SOUTH")
+  return(data)
 }
