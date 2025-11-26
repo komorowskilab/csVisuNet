@@ -17,20 +17,16 @@ generate_object = function(decs, rules, type, TopNodes, FiltrParam,
     }
     AllNets[[i]] = Net
   }
-  
+
   # --- Elsa: replaced 'generateNet(all, ...)' call with merged combination of existing networks ---
   if (length(decs) > 0) {
     all_nodes <- NULL
     all_edges <- NULL
     all_rulesets <- list()
-    
-    for (d in decs) {
-      # --- Mattias: added back 'group' column to 'all' network
-      nodes_d <- AllNets[[d]]$nodes
 
+    for (d in decs) {
       if (!is.null(nodes_d)) {
-        nodes_d$group <- d
-        all_nodes <- rbind(all_nodes, nodes_d)
+        all_nodes <- rbind(all_nodes, AllNets[[d]]$edges)
       }
       if (!is.null(AllNets[[d]]$edges)) {
         all_edges <- rbind(all_edges, AllNets[[d]]$edges)
@@ -39,20 +35,20 @@ generate_object = function(decs, rules, type, TopNodes, FiltrParam,
         all_rulesets <- c(all_rulesets, AllNets[[d]]$RulesSetPerNode)
       }
     }
-    
+
     AllNets[['all']] <- list(nodes = all_nodes,
                              edges = all_edges,
                              RulesSetPerNode = all_rulesets)
   } else {
     AllNets[['all']] <- list(nodes = NULL, edges = NULL, RulesSetPerNode = NULL)
   }
-  
+
   return(AllNets)
 }
 
 # --- OLD VERSION ---
 # generate_object = function(decs, rules,type,  TopNodes, FiltrParam,  NodeColorType,  EdgeColor, EdgeWidth, NewDataNodes, NewDataEdges){
-#   
+#
 #   AllNets = NULL
 #   Net = NULL
 #   for (i in decs){
@@ -67,7 +63,7 @@ generate_object = function(decs, rules, type, TopNodes, FiltrParam,
 #     }else{
 #       Net = list(nodes = NULL, edges = NULL, NodeRulesSetPerNode = NULL)
 #     }
-#     
+#
 #     AllNets[[i]] = Net
 #     Net =  NULL
 #   }
