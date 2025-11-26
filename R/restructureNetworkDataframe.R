@@ -14,7 +14,7 @@ restructureNetworkDF <- function(network){
     "\nConnection: ", round(network$edges$conn, 2)
   )
   network$nodes$title <- paste0(
-  "Name: ", network$nodes$name, "\nEdges: ", network$nodes$NRules,
+  "Name: ", network$nodes$id, "\nEdges: ", network$nodes$NRules,
   "\nNode connection: ", round(network$nodes$NodeConnection, 2), "\nMean accuracy: ",
   round(network$nodes$meanAcc, 2), "\nMean support: ", round(network$nodes$meanSupp, 2),
   "\nMean decision coverage: ", round(network$nodes$meanDecisionCoverage, 2))
