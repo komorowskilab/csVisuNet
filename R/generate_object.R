@@ -25,8 +25,8 @@ generate_object = function(decs, rules, type, TopNodes, FiltrParam,
     all_rulesets <- list()
 
     for (d in decs) {
-      if (!is.null(nodes_d)) {
-        all_nodes <- rbind(all_nodes, AllNets[[d]]$edges)
+      if (!is.null(AllNets[[d]]$nodes)) {
+        all_nodes <- rbind(all_nodes, AllNets[[d]]$nodes)
       }
       if (!is.null(AllNets[[d]]$edges)) {
         all_edges <- rbind(all_edges, AllNets[[d]]$edges)
