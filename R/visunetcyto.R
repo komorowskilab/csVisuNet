@@ -167,12 +167,15 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
 
 
   #filters -- New --
-  net_suid <- getNetworkSuid(title = "all")
   filter_slides(network = net_suid)
 
   for (net_name in names(data)) {
     if (net_name!="all"){
-      createSubnetwork(nodes=net_name, nodes.by.col = "group", subnetwork.name=net_name, network="all")
+      node_ids = data[[net_name]]$nodes$id
+      edge_ids = data[[net_name]]$edges$id
+      createSubnetwork(nodes=node_ids, nodes.by.col = "id", exclude.edges = TRUE,
+                       edges=edge_ids, edges.by.col = "id",
+                       subnetwork.name=net_name, network=net_suid)
     }
   }
   hidePanel("SOUTH")

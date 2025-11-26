@@ -25,7 +25,7 @@ restructureNetworkDF <- function(network){
 
   network$nodes <- network$nodes[intersect(node_columns_to_keep, names(network$nodes))]
 
-  edge_columns_to_keep <- c("source", "target", "color", "width", "title")
+  edge_columns_to_keep <- c("id", "source", "target", "color", "width", "title")
 
   network$edges <- network$edges[intersect(edge_columns_to_keep, names(network$edges))]
 
