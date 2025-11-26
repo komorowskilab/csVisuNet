@@ -18,10 +18,10 @@ filter_slides <- function(network = NULL) {
 
   # --- meanAcc ---
   vals_acc <- na.omit(df$meanAcc)
-  if (!length(vals_acc)) stop("No values for meanAcc")
+  if (!length(vals_acc)) stop("No values for mean accuracy")
 
   quiet_createColumnFilter(
-    filter.name = "Mean accuracy filter",       # SAME spelling!
+    filter.name = "Mean accuracy filter",
     column      = "meanAcc",
     criterion   = range(vals_acc),
     predicate   = "BETWEEN",
@@ -32,7 +32,7 @@ filter_slides <- function(network = NULL) {
 
   # --- meanDecisionCoverage ---
   vals_deccov <- na.omit(df$meanDecisionCoverage)
-  if (!length(vals_deccov)) stop("No values for meanDecisionCoverage")
+  if (!length(vals_deccov)) stop("No values for Mean decision coverage")
 
   quiet_createColumnFilter(
     filter.name = "Mean decision coverage filter",
@@ -46,7 +46,7 @@ filter_slides <- function(network = NULL) {
 
   # --- meanSupp ---
   vals_supp <- na.omit(df$meanSupp)
-  if (!length(vals_supp)) stop("No values for meanSupp")
+  if (!length(vals_supp)) stop("No values for mean support")
 
   quiet_createColumnFilter(
     filter.name = "Mean support filter",
