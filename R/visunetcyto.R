@@ -144,7 +144,8 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
   validate(
     filter_rules(rules, minAcc, minSupp, FiltrParam, value_slider)
   )
-  data = generate_object(decs, rules, type, TopNodes, FiltrParam, NodeColorType , EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
+  RulesFiltr =  filtration_rules(rules, minAcc, FiltrParam, value_slider)
+  data = generate_object(decs, RulesFiltr, type, TopNodes, FiltrParam, NodeColorType, EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
   if(addGO) {
     data <- addGOannotations(data, GO_ontology)
   }
