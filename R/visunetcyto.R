@@ -131,8 +131,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
-  #minAcc <-  rules_10per_param$minAcc
-  minAcc <- 0 #gör att accuracy sätts till 0 i Visunet
+  minAcc <-  rules_10per_param$minAcc
   minSupp <-  rules_10per_param$minSupp
   minDecisionCoverage <- rules_10per_param$minDecisionCoverage
 
