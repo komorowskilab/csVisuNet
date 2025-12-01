@@ -131,16 +131,37 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
                        NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R',
                        EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(),
                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum",
-                       NodeSizeScale=c(20,60), NodeBorderScale=3){
+                       NodeSizeScale=c(20,60), NodeBorderScale=3,
+                       minAcc=-1, minSupp=-1, minDecisionCoverage=-1){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
-  minAcc <-  rules_10per_param$minAcc
-  minSupp <-  rules_10per_param$minSupp
-  minDecisionCoverage <- rules_10per_param$minDecisionCoverage
+  if (minAcc == -1){
+    minAcc <-  rules_10per_param$minAcc
+    message(paste0("Default minimum accuracy is ", minAcc))
+  }
+  if (minSupp == -1){
+    minSupp <-  rules_10per_param$minSupp
+    message(paste0("Default minimum support is ", minSupp))
+  }
+  if (minDecisionCoverage == -1){
+    minDecisionCoverage <- rules_10per_param$minDecisionCoverage
+    message(paste0("Default minimum DecisionCoverage is ", minDecisionCoverage))
+  }
+
 
   value_slider = minDecisionCoverage
   FiltrParam = NodeSizeMetric
+
+  if (FiltrParam == "DC"){
+    value_slider = minDecisionCoverage
+    message("Using Decision Coverage and accuracy for filter")
+  } else {
+    value_slider = minSupp
+    message("Using Support and accuracy for filter")
+
+  }
+
   TopNodes = 0
 
   decs = unique(as.matrix(rules$decision))
