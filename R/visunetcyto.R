@@ -159,7 +159,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
 
   net_name="all"
   network <- data[[net_name]]
-  network <- restructureNetworkDF(network)
+  network <- restructureNetworkDF(network, NodeBorderScale)
   net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
 
 
