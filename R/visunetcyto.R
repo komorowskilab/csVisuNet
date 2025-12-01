@@ -127,7 +127,11 @@
 #' vis_out <- visunet(rules, type = "L")
 #'
 
-visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R', EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(), addGO = FALSE, GO_ontology = "MF", NodeSize = "sum"){
+visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
+                       NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R',
+                       EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(),
+                       addGO = FALSE, GO_ontology = "MF", NodeSize = "sum",
+                       NodeSizeScale=c(20,60), NodeBorderScale=3){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
@@ -161,7 +165,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",  NodeColo
 
   #styles
   style_name = paste(title, net_name, '_style')
-  createStyle(style_name, network)
+  createStyle(style_name, network, NodeSizeScale)
 
   setVisualStyle(style_name)
 

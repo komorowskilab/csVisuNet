@@ -1,4 +1,4 @@
-restructureNetworkDF <- function(network){
+restructureNetworkDF <- function(network, NodeBorderScale){
   colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
   colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
   colnames(network$nodes)[colnames(network$nodes) == "label"] <- "name"
@@ -7,7 +7,7 @@ restructureNetworkDF <- function(network){
     "label: attribute=NAME labelsize=12 color=black outline=false background=false"
   )
 
-  network$nodes$borderWidth <- network$nodes$borderWidth * 3
+  network$nodes$borderWidth <- network$nodes$borderWidth * NodeBorderScale
 
   network$edges$title <- paste0(
     "Edge: ", network$edges$source, ", ", network$edges$target,
