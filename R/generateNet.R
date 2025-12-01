@@ -227,6 +227,7 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
       EdgesInfo$connNorm = ((EdgesInfo$conn-min(EdgesInfo$conn))/
                               (max(EdgesInfo$conn)-min(EdgesInfo$conn)))
     }
+    # --- Mattias added decision to edge id
     EdgesInfo$id = paste0(decs, '_', EdgesInfo$from, '-', EdgesInfo$to )
     if(EdgeColor=='B'){
       EdgesInfo$color = rep('#c2c2c2', length(EdgesInfo$connNorm))
