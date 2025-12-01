@@ -147,6 +147,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   if (minDecisionCoverage == -1){
     minDecisionCoverage <- rules_10per_param$minDecisionCoverage
     message(paste0("Default minimum DecisionCoverage is ", minDecisionCoverage))
+    message("")
   }
 
 
@@ -159,7 +160,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   } else {
     value_slider = minSupp
     message("Using Support and accuracy for filter")
-
+    message("")
   }
 
   TopNodes = 0
@@ -171,7 +172,11 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   RulesFiltr =  filtration_rules(rules, minAcc, FiltrParam, value_slider)
   data = generate_object(decs, RulesFiltr, type, TopNodes, FiltrParam, NodeColorType, EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
   if(addGO) {
-    data <- addGOannotations(data, GO_ontology)
+    message("Adding Go Annotations")
+    message("")
+    suppressMessages({
+      data <- addGOannotations(data, GO_ontology)
+    })
   }
 
   # New stuff for cytoscape below, above uses original code to extract networks
@@ -180,14 +185,22 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
 
   net_name="all"
   network <- data[[net_name]]
-  network <- restructureNetworkDF(network, NodeBorderScale)
-  net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
+  message("Loading data...")
+  message("")
+  network <- restructureNetworkDF(network, NodeBorderScale, addGO)
+  suppressMessages({
+    net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
+  })
 
 
   #styles
+  message("Creating style...")
+  message("")
   style_name = paste(title, net_name, '_style')
   createStyle(style_name, network, NodeSizeScale)
 
+  message("Applying style...")
+  message
   setVisualStyle(style_name)
 
 
