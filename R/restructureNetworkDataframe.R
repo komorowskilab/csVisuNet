@@ -10,11 +10,11 @@ restructureNetworkDF <- function(network, NodeBorderScale){
   network$nodes$borderWidth <- network$nodes$borderWidth * NodeBorderScale
 
   network$edges$title <- paste0(
-    "Edge: ", network$edges$source, ", ", network$edges$target,
+    "Edge: ", sub("^[^_]*_", "",network$edges$source), ", ", sub("^[^_]*_", "",network$edges$target),
     "\nConnection: ", round(network$edges$conn, 2)
   )
   network$nodes$title <- paste0(
-  "Name: ", network$nodes$id, "\nEdges: ", network$nodes$NRules,
+  "Name: ", sub("^[^_]*_", "",network$nodes$id), "\nEdges: ", network$nodes$NRules,
   "\nNode connection: ", round(network$nodes$NodeConnection, 2), "\nMean accuracy: ",
   round(network$nodes$meanAcc, 2), "\nMean support: ", round(network$nodes$meanSupp, 2),
   "\nMean decision coverage: ", round(network$nodes$meanDecisionCoverage, 2))
