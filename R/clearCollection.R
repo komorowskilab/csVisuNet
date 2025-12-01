@@ -2,6 +2,7 @@
 
 
 clearCollection = function(title) {
+  suppressMessages({
   nodes <- data.frame(id=c("node 0","node 1"),
                       group=c("A","A"), # categorical strings
                       score=as.integer(c(20,10)), # integers
@@ -17,4 +18,5 @@ clearCollection = function(title) {
   for (net in nets_to_delete){
     deleteNetwork(network=net)
   }
+  })
 }
