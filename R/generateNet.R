@@ -74,9 +74,9 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
     # Set of rules per Node
     if(type == 'L'){
       rules_RDF_fin <- suppressWarnings(Viewrules_type_L(rules, node_id))
-      NodeRulesSet[[nod]] = viewRules(rules_RDF_fin)
+      NodeRulesSet[[paste0(decs, "_", nod)]] = viewRules(rules_RDF_fin)
     }else{
-      NodeRulesSet[[nod]] = viewRules(rules[node_id,])
+      NodeRulesSet[[paste0(decs, "_", nod)]] = viewRules(rules[node_id,])
     }
 
     # dominant decision
@@ -122,7 +122,7 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
                        '</b><br/>Mean decision coverage: <b>', round(meanDecisionCoverage,2))
 
     NodeInfoDF = data.frame(
-      id = NodeUniq, label = NodeLabel, DiscState = NodeState,
+      id = paste0(decs,"_",NodeUniq), label = NodeLabel, DiscState = NodeState,
       color.background = NodeColor,
       value = sumDecisionCoverage,
       borderWidth = (PrecRules*20), color.border = c("#0072B2"),
@@ -135,7 +135,7 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
                        '</b><br/>Mean accuracy: <b>', round(meanAcc,2),
                        '</b><br/>Mean support: <b>', round(meanSupp,2))
     NodeInfoDF = data.frame(
-      id = NodeUniq, label = NodeLabel, DiscState = NodeState,
+      id = node_id_with_dec, label = NodeLabel, DiscState = NodeState,
       color.background = NodeColor,
       value = sumSupp,
       borderWidth = (PrecRules*20), color.border = c("#0072B2"),
@@ -245,6 +245,9 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
     # --- Elsa: Removed commented block that was here---
     EdgesTile = paste0('Edge: <b>', EdgesInfo$from, ', ', EdgesInfo$to, '</b><br/>Connection: <b>', round(EdgesInfo$conn,2), '</b>')
     EdgesInfo$title = EdgesTile
+    EdgesInfo$from = paste0(decs,"_",EdgesInfo$from)
+    EdgesInfo$to = paste0(decs,"_",EdgesInfo$to)
+
   }
 
   if(length(NewDataNodes)>0){
