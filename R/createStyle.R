@@ -3,6 +3,7 @@ createStyle = function(stylename, network, NodeSizeScale) {
                    NODE_LABEL_POSITION="S,N,c,0,5",
                    NODE_SELECTED_PAINT="#d2e5ff",
                    EDGE_STROKE_SELECTED_PAINT="yellow")
+
   # Node styles
   nodeTooltip <- mapVisualProperty('node tooltip','title','p')
   nodeSize <- mapVisualProperty('node size','value','c', c(min(network$nodes$value),max(network$nodes$value)), NodeSizeScale)
