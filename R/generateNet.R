@@ -135,7 +135,7 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
                        '</b><br/>Mean accuracy: <b>', round(meanAcc,2),
                        '</b><br/>Mean support: <b>', round(meanSupp,2))
     NodeInfoDF = data.frame(
-      id = node_id_with_dec, label = NodeLabel, DiscState = NodeState,
+      id = paste0(decs,"_",NodeUniq), label = NodeLabel, DiscState = NodeState,
       color.background = NodeColor,
       value = sumSupp,
       borderWidth = (PrecRules*20), color.border = c("#0072B2"),
