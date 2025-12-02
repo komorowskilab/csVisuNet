@@ -3,10 +3,6 @@ restructureNetworkDF <- function(network, NodeBorderScale, addGO){
   colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
   colnames(network$nodes)[colnames(network$nodes) == "label"] <- "name"
 
-  network$nodes$popup <- paste0(
-    "label: attribute=NAME labelsize=12 color=black outline=false background=false"
-  )
-
   network$nodes$borderWidth <- network$nodes$borderWidth * NodeBorderScale
 
   network$edges$title <- paste0(
