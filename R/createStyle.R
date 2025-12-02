@@ -3,6 +3,7 @@ createStyle = function(stylename, network, NodeSizeScale) {
                    NODE_LABEL_POSITION="S,NW,l,0.00,10.00",
                    NODE_LABEL_BACKGROUND_COLOR="white",
                    NODE_LABEL_BACKGROUND_SHAPE="rectangle",
+                   NODE_SELECTED_PAINT="#d2e5ff",
                    EDGE_LABEL_BACKGROUND_SHAPE="rectangle",
                    EDGE_STROKE_SELECTED_PAINT="yellow",
                    EDGE_LABEL_BACKGROUND_COLOR="white",
