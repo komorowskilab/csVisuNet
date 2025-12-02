@@ -18,6 +18,19 @@ restructureNetworkDF <- function(network, NodeBorderScale, addGO){
   "\nNode connection: ", round(network$nodes$NodeConnection, 2), "\nMean accuracy: ",
   round(network$nodes$meanAcc, 2), "\nMean support: ", round(network$nodes$meanSupp, 2),
   "\nMean decision coverage: ", round(network$nodes$meanDecisionCoverage, 2))
+  for (nod in network$nodes$id){
+    rules = network$RulesSetPerNode[[nod]]
+    newValue=""
+    if (!is.null(rules) && nrow(rules) > 0) {
+      for (i in seq_len(nrow(rules))) {
+        rule <- rules[i, ]  # one-row data.frame
+        newValue=paste0(newValue, "\n", rule$rule, ", length: ", rule$length,
+                        ", accuracy: ", rule$accuracy, ", support: ", rule$support,
+                        ", Pvalue: ", rule$pValue)
+      }
+    }
+    network$nodes[network$nodes$id == nod, "Rules"] <- newValue
+  }
 
   if (addGO){
     network$nodes$title <- ifelse(
@@ -32,7 +45,7 @@ restructureNetworkDF <- function(network, NodeBorderScale, addGO){
     network$nodes$title = gsub("<br/>", "\n", network$nodes$title)
   }
 
-  node_columns_to_keep <- c("id", "name", "group", "color.background", "value",
+  node_columns_to_keep <- c("id", "Rules", "name", "group", "color.background", "value",
                             "color.border", "borderWidth", "meanAcc",
                             "meanSupp", "meanDecisionCoverage", "title", "popup")
 
