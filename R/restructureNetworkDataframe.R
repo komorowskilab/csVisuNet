@@ -1,9 +1,12 @@
-restructureNetworkDF <- function(network, NodeBorderScale, addGO){
+restructureNetworkDF <- function(network, NodeSizeScale, NodeBorderScale, EdgeWidthScale, addGO){
   colnames(network$edges)[colnames(network$edges) == "from"] <- "source"
   colnames(network$edges)[colnames(network$edges) == "to"] <- "target"
   colnames(network$nodes)[colnames(network$nodes) == "label"] <- "name"
-
-  network$nodes$borderWidth <- network$nodes$borderWidth * NodeBorderScale
+  
+  # Scale node size, node border width, and edge width
+  network$nodes$value <- scales::rescale(network$nodes$value, to=NodeSizeScale)
+  network$nodes$borderWidth <- scales::rescale(network$nodes$borderWidth, to=NodeBorderScale)
+  network$edges$width <- scales::rescale(network$edges$width, to=EdgeWidthScale)
 
   network$edges$title <- paste0(
     "Edge: ", sub("^[^_]*_", "",network$edges$source), ", ", sub("^[^_]*_", "",network$edges$target),
