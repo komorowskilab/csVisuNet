@@ -132,7 +132,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
                        EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(),
                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum",
                        NodeSizeScale=c(20,60), NodeBorderScale=3,
-                       minAcc=-1, minSupp=-1, minDecisionCoverage=-1){
+                       minAcc=-1, minSupp=-1, minDecisionCoverage=-1, style=TRUE){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
@@ -192,20 +192,23 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
     net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
   })
 
-
-  #styles
-  message("Creating style...")
-  message("")
+     #styles
   style_name = paste(title, net_name, '_style')
-  createStyle(style_name, network, NodeSizeScale)
+  if (style | !(style_name %in% getVisualStyleNames())){
+    message("Creating style...")
+    message("")
+    createStyle(style_name, network, NodeSizeScale)
 
+
+  }
   message("Applying style...")
-  message
+  message("")
   setVisualStyle(style_name)
 
 
+
   #filters -- New --
-  filter_slides(network = net_suid)
+  #filter_slides(network = net_suid)
 
   for (net_name in names(data)) {
     if (net_name!="all"){
@@ -214,6 +217,5 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
                        subnetwork.name=net_name, network=net_suid)
     }
   }
-  hidePanel("SOUTH")
   return(data)
 }
