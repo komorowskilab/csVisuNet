@@ -152,13 +152,13 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
 
 
   value_slider = minDecisionCoverage
-  FiltrParam = NodeSizeMetric
-
-  if (FiltrParam == "DC"){
+  if (NodeSizeMetric == "DC"){
     value_slider = minDecisionCoverage
     message("Using Decision Coverage and accuracy for filter")
+    FiltrParam = 'Min Decision Coverage'
   } else {
     value_slider = minSupp
+    FiltrParam = "Min Support"
     message("Using Support and accuracy for filter")
     message("")
   }
@@ -184,7 +184,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   clearCollection(title)
 
   net_name="all"
-  network <- data[[net_name]]
+  network <<- data[[net_name]]
   message("Loading data...")
   message("")
   network <- restructureNetworkDF(network, NodeBorderScale, addGO)
