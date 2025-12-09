@@ -133,7 +133,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum",
                        NodeSizeScale=c(15,50), NodeBorderScale=c(1,12),
                        EdgeWidthScale=c(1,6),
-                       minAcc=-1, minSupp=-1, minDecisionCoverage=-1, style=TRUE){
+                       minAcc=-1, minSupp=-1, minDecisionCoverage=-1, style=TRUE, TopNodes=0){
   rules <- ruleSet
   rules <-  data_input(rules, type)
   rules_10per_param <-  filtration_rules_10per(rules)
@@ -163,8 +163,6 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
     message("Using Support and accuracy for filter")
     message("")
   }
-
-  TopNodes = 0
 
   decs = unique(as.matrix(rules$decision))
   validate(
@@ -205,7 +203,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   message("Applying style...")
   message("")
   setVisualStyle(style_name)
-  
+
   message("Applying layout...")
   message("")
   layoutNetwork("force-directed-cl", network)
