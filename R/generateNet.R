@@ -249,6 +249,13 @@ generateNet=function(decs, rules, type, RulesSetSite, TopNodes,FiltrParam,
     EdgesInfo$to = paste0(decs,"_",EdgesInfo$to)
 
   }
+    # --- Mattias: Removed edges whose nodes were removed by TopNodes
+  valid_nodes <- NodeInfoDF$id
+
+  EdgesInfo <- EdgesInfo[
+    EdgesInfo$from %in% valid_nodes &
+      EdgesInfo$to   %in% valid_nodes,
+  ]
 
   if(length(NewDataNodes)>0){
     NewDataNodesDF = NewDataNodes$nodes
