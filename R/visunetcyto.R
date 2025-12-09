@@ -131,7 +131,8 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
                        NodeColorType = "DL", NodeSizeMetric = "DC", EdgeColor = 'R',
                        EdgeWidth=10, CustObjectNodes=list(), CustObjectEdges=list(),
                        addGO = FALSE, GO_ontology = "MF", NodeSize = "sum",
-                       NodeSizeScale=c(20,60), NodeBorderScale=3,
+                       NodeSizeScale=c(15,50), NodeBorderScale=c(1,12),
+                       EdgeWidthScale=c(1,6),
                        minAcc=-1, minSupp=-1, minDecisionCoverage=-1, style=TRUE){
   rules <- ruleSet
   rules <-  data_input(rules, type)
@@ -187,7 +188,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   network <<- data[[net_name]]
   message("Loading data...")
   message("")
-  network <- restructureNetworkDF(network, NodeBorderScale, addGO)
+  network <- restructureNetworkDF(network, NodeSizeScale, NodeBorderScale, EdgeWidthScale, addGO)
   suppressMessages({
     net_suid <- createNetworkFromDataFrames(network$nodes,network$edges, title=net_name, collection=title)
   })
@@ -197,14 +198,17 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
   if (style | !(style_name %in% getVisualStyleNames())){
     message("Creating style...")
     message("")
-    createStyle(style_name, network, NodeSizeScale)
+    createStyle(style_name, network)
 
 
   }
   message("Applying style...")
   message("")
   setVisualStyle(style_name)
-
+  
+  message("Applying layout...")
+  message("")
+  layoutNetwork("force-directed-cl", network)
 
 
   #filters -- New --

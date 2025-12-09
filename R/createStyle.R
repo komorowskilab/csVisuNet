@@ -1,12 +1,12 @@
-createStyle = function(stylename, network, NodeSizeScale) {
+createStyle = function(stylename, network) {
   defaults <- list(NODE_SHAPE="circle",
                    NODE_LABEL_POSITION="S,N,c,0,5",
                    NODE_SELECTED_PAINT="#d2e5ff",
-                   EDGE_STROKE_SELECTED_PAINT="yellow")
+                   EDGE_STROKE_SELECTED_PAINT="#d2e5ff")
 
   # Node styles
   nodeTooltip <- mapVisualProperty('node tooltip','title','p')
-  nodeSize <- mapVisualProperty('node size','value','c', c(min(network$nodes$value),max(network$nodes$value)), NodeSizeScale)
+  nodeSize <- mapVisualProperty('node size','value','p')
   nodeFills <- mapVisualProperty('node fill color', 'color.background', 'p')
   nodeBorderWidth <- mapVisualProperty('node border width', 'borderWidth', 'p')
   nodeBorderColor <- mapVisualProperty('node border paint', 'color.border', 'p')
