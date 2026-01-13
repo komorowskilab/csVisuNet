@@ -33,7 +33,7 @@ Remotes:
     datastorm-open/visNetwork,
     mategarb/R.ROSETTA,
     nik01010/dashboardthemes
-RoxygenNote: 7.0.2
+RoxygenNote: 7.3.3
 Suggests: 
     knitr,
     rmarkdown

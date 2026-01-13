@@ -3,15 +3,17 @@
 \docType{data}
 \name{autcon_ruleset}
 \alias{autcon_ruleset}
-\title{Rule set from the classifier of autisic and non-autiscic young males}
-\format{A data frame with 191 rows and 5 variables. Each row corresponds to one rule:
+\title{Rule set from the classifier of young males with autism and healthy individuals.}
+\format{
+A data frame with 191 rows and 5 variables. Each row corresponds to one rule:
 \describe{
   \item{features}{comma-separated conditions (feature=value)}
   \item{decision}{a rule decision}
   \item{accuracyRHS}{a rule accuracy value}
   \item{supportRHS}{a rule support value}
   \item{pValue}{a rule p-value value}
-}}
+}
+}
 \source{
 \href{https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25507}{GEO DataSet}
 }
