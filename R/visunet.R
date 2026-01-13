@@ -134,7 +134,7 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
   minAcc <-  rules_10per_param$minAcc
   minSupp <-  rules_10per_param$minSupp
   minDecisionCoverage <- rules_10per_param$minDecisionCoverage
-  
+
   if(minDecisionCoverage == 0){
     NodeSizeMetric = 'S'
     choices_v <- 'Min Support'
@@ -147,11 +147,11 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
     choices_values <- c(minDecisionCoverage, minSupp )
     names(choices_values) <- c('DC', 'S')
   }
-  
+
   # User interface
   ui <- dashboardPage(
     header <- dashboardHeader(title = "VisuNet", tags$li(class = "dropdown", actionButton("done", "Done"))),
-    
+
     sidebar <- dashboardSidebar(
       sidebarMenu(
         tags$style(".skin-blue .sidebar a { color: #444; }"),
@@ -159,13 +159,12 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
         hr(),
         sliderInput("accuracy", ("Min Accuracy"),
                     min = 0, max = 1, value = minAcc, step = 0.01),
-        
+
         uiOutput("FiltrParam"),
         uiOutput("value_slider"),
-        
+
         numericInput("TopNodes", label = ("Show top n nodes"), value = 0),
         selectInput("NodeColor",label = ("Color of nodes"), choices =  c('Accuracy value' = 'A','Discretization Levels' = 'DL'), selected = NodeColorType),
-        
         actionButton("run", "Run"),
         # downloadButton('saveHTML', 'Save network as .html'),
         uiOutput("download", class =  "butt1"),
@@ -176,8 +175,7 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
     body <- dashboardBody(
       tabItems(
         tabItem(tabName = 'network',title = 'Network',
-                
-                
+
                 fluidRow(
                   #adding network
                   box(width=12, height = 700,
@@ -185,7 +183,6 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
                       solidHeader = TRUE,
                       collapsible = FALSE,
                       visNetworkOutput("network", height = "600px"))
-                  
                 ),
                 #,
                 fluidRow(
@@ -209,17 +206,13 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
                 h2("About"))
       )
     )
-    
   )
-  
-  
-  
-  
+
+
+
   server <- function(input, output) {
-    
     decs = unique(as.matrix(rules$decision))
     decs_f = c('all', decs )
-    
     #Run button click
     data <- eventReactive( input$run, {
       validate(
@@ -227,23 +220,18 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
       )
       RulesFiltr =  filtration_rules(rules, input$accuracy, input$FiltrParam, input$value_slider)
       data_input=generate_object(decs, RulesFiltr,type, input$TopNodes, input$FiltrParam,input$NodeColor, EdgeColor, EdgeWidth, CustObjectNodes, CustObjectEdges, NodeSize)
-
       # -- Elsa: Added GO annotations to network in run button click ---
       if(addGO) {
         message("Adding GO annotations") # can be removed
         data_input <- addGOannotations(data_input, GO_ontology)
       }
-
       return(data_input)
     })
-    
     net <- reactive({
       data = data()
-      
       decisionName = input$decisions
       nodes = data[[decisionName]]$nodes
       edges = data[[decisionName]]$edges
-      
       validate(
         need(is.null(nodes) == FALSE, "No rules for the current decision. Change the settings")
       )
@@ -264,44 +252,35 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
                                                                 color: black;
                                                                 border:none;
                                                                 outline:none;'))
-        
       }else{
         graph
       }
-      
     })
-    
     output$network <- renderVisNetwork({
       net()
     })
-    
-    
+
     observe({
       visNetworkProxy("network") %>%
         visOptions(selectedBy = list(variable = "group", selected = input$Select) )
     })
-    
-    
-    
+
+
     output$decisions <- renderUI({
       selectInput("decisions",label = ("Choose decision"),
-                  
-                  
-                  
+
+
                   choices =  as.character(decs_f), selected = decs_f[1])
     })
-    
-    
+
     output$FiltrParam = renderUI({
-      
-      
+
       selectInput(
         inputId = "FiltrParam",
         label = "",
         choices = as.character(choices_v),
         selected = NodeSizeMetric)
     })
-    
     data_available <- eventReactive( input$FiltrParam, {
       data_available <- choices_v[choices_v == input$FiltrParam]
     })
@@ -323,12 +302,10 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
                   value = value_available,
                   step = step)
     })
-    
     output$support <- renderUI({
       sliderInput("support", ("Min Support"),
                   min = 0, max = max(rules$supportRHS), value = minSupp, step = 0.01)
     })
-    
     output$NodeColor <- renderUI({
       if(input$ColorNode == 'DL'){
         colorNodeValue = 'Discretization Levels'
@@ -337,21 +314,17 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
       }
       selectInput("NodeColor",label = h4("Color of nodes"), choices =  c('Accuracy value','Discretization Levels'), selected = NodeColorType)
     })
-    
-    
+
     nodeInfo <- reactiveValues(selected = '')
-    
     observeEvent(input$current_node_id, {
       nodeInfo$selected <- input$current_node_id
     })
-    
     output$table <- DT::renderDataTable({
       data =  data()
       decisionName = input$decisions
       #nodes = data[[decisionName]]$nodes
       data[[decisionName]]$RulesSetPerNode[[nodeInfo$selected]]
     })
-    
     output$dt_UI <- renderUI({
       data =  data()
       decisionName = input$decisions
@@ -362,9 +335,7 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
       if(nrow(nodes[which(nodeInfo$selected == nodes$id),])!=0){
         DT::dataTableOutput('table')
       } else{}
-      
     })
-    
     output$saveHTML <- downloadHandler(
       filename = function() {
         paste('network-', Sys.Date(), '.html', sep='')
@@ -372,23 +343,19 @@ visunet = function(ruleSet, type ="RDF",  NodeColorType = "DL", NodeSizeMetric =
       content = function(con) {
         net() %>%
           visSave(con)
-        
       }
     )
-    
     output$download <- renderUI({
       if(input$run !=0) {
         downloadButton('saveHTML', 'Download network as .html')
       }
     })
-    
-    
+
     observeEvent(input$done, {
       result_data <- data()
       # GO annotations are already added when "Run" was clicked
       stopApp(result_data)
     })
   }
-  
   runGadget(ui, server, viewer = browserViewer())
 }
