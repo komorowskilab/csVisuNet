@@ -12,7 +12,7 @@ VisuNet is implemented in R and uses the  [Shiny Gadgets](https://shiny.rstudio.
 ***
 Installation
 ```R
-devtools::install_github("komorowskilab/VisuNet")
+devtools::install_github("komorowskilab/csVisuNet")
 ```
 
 ***
