@@ -90,6 +90,31 @@ Default is FALSE. Requires clusterProfiler, org.Hs.eg.db, and GO.db packages.}
   \item "mean" - use the mean value of support/decision coverage for the node
   \item "sum" - use the sum of support/decision coverage for the node (default)
 }}
+
+\item{NodeSizeScale}{a Vector containing the min and max values for the size of the Nodes in the visualization:
+Default is c(15,50)}
+
+\item{NodeBorderScale}{a Vector containing the min and max values for the thickness of the node border in the visualization:
+Default is c(1,12)}
+
+\item{EdgeWidthScale}{a Vector containing the min and max values for the thickness of the edges in the visualization:
+Default is c(1,6)}
+
+\item{minAcc}{threshold for the minimum Accuracy filtering:
+Default is -1, which sets the threshold to include the top 10% of rules}
+
+\item{minSupp}{threshold for the minimum Support filtering:
+Default is -1, which sets the threshold to include the top 10% of rules}
+
+\item{minDecisionCoverage}{threshold for the minimum Decision Coverage filtering:
+Default is -1, which sets the threshold to include the top 10% of rules}
+
+\item{style}{Boolean that controls whether cytoscape should create a styling or not:
+Default is TRUE, needs to be TRUE the first time the function is run
+Is used to speed up the process if the filtering needs to be redone}
+
+\item{TopNodes}{set the amount of nodes to showcase:
+Default is 0, which uses all of the Nodes}
 }
 \value{
 Rule Network Object - a collection of lists corresponding to decision variables and an additional list for the combined decision ‘all’.
@@ -119,7 +144,7 @@ group defines the content of the ‘Select by decision’ drop-down box.
 \cr
 Structure of the data frame for edges:
 \itemize{
-\item from, to - the pair of nodes that create the edge
+\item source, target - the pair of nodes that create the edge
 \item conn - the connection variable obtained from the edge-associated rules.
 \item connNorm - the connection variable normalized according to the maximum connection variable in the rule network
 \item label2 - the edge id

@@ -3,10 +3,6 @@
 
 #' VisuNet is an interactive tool for network visualization of complex rule-based classifiers. See the \href{https://komorowskilab.github.io/VisuNet/}{documentation}.
 #' @import visNetwork shiny shinythemes R.ROSETTA
-# --- Elsa: Import functions for GO annotations ---
-#' @importFrom clusterProfiler bitr groupGO
-#' @importFrom GO.db Term
-#' @importFrom tidyr separate_rows
 #' @param ruleSet the appropriately formatted set of rules:
 #'\itemize{
 #' \item R.ROSETTA data frame - the rules data frame that is the output of R.ROSETTA can be directly imported in VisuNet.
