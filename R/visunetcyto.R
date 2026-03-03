@@ -145,7 +145,8 @@
 #'
 #' #"Line by line" file format
 #' rules <- autcon_ruleset
-#' vis_out <- visunet(rules, type = "L")
+#'
+#' visunetcyto(rules,minAcc = 0.8,minSupp = 6,minDecisionCoverage = 0.1)
 #'
 
 visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
@@ -235,10 +236,14 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
 
   for (net_name in names(data)) {
     if (net_name!="all"){
-      edge_ids = data[[net_name]]$edges$id
-      createSubnetwork(edges=edge_ids, edges.by.col = "id",
+      #edge_ids = data[[net_name]]$edges$id
+      node_ids <- data[[net_name]]$nodes$id
+      createSubnetwork(nodes=node_ids, nodes.by.col  = "id",
                        subnetwork.name=net_name, network=net_suid)
+      # createSubnetwork(edges=edge_ids, edges.by.col = "id",
+      #                  subnetwork.name=net_name, network=net_suid)
     }
   }
   return(data)
 }
+

@@ -167,7 +167,8 @@ vis_out <- visunet(resultsRos$main, type = "RDF")
 
 #"Line by line" file format
 rules <- autcon_ruleset
-vis_out <- visunet(rules, type = "L")
+
+visunetcyto(rules,minAcc = 0.8,minSupp = 6,minDecisionCoverage = 0.1)
 
 }
 \references{
