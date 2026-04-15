@@ -11,7 +11,7 @@
 #' # visuArc(net= vis,decision= 'autism',feature='ZSCAN18')
 
 
-visuArc <- function(net, decision, feature=NULL){
+visuArc <- function(net, decision, feature=NULL,label=NULL){
   #load libraries if you only copy the function
   #library(VisuNet)
   # if (!require(arcdiagram)) install.packages('arcdiagram')
@@ -66,10 +66,16 @@ visuArc <- function(net, decision, feature=NULL){
   ordV <- c(1,order(valsCols, decreasing = T)+1)
 
   colsLabs <- rep("black",length(labelsNodes))
-  colsLabs[which(labelsNodes == paste0(feature2,"=",discLev))] <- "red"
+  colsLabs[which(labelsNodes == paste0(decision,'_',feature2,"=",discLev))] <- "red"
+
+
+  if(is.null(label)){
+    label=decision
+  }
+
   # --- Mattias and GP: Changed the row below to use the new ids and turn them back into nodeNames
   arcplot(M, lwd.arcs=edgesCon, col.arcs = colors, col.nodes = colNodes, labels=sub("^[^_]+_","",sub("=.*","",labelsNodes)),
-          ordering=ordV, col.labels=colsLabs, cex.labels=0.7, font=1, lwd.nodes = nodeSize, horizontal = FALSE,main = decision,adj=1)
+          ordering=ordV, col.labels=colsLabs, cex.labels=0.7, font=1, lwd.nodes = nodeSize, horizontal = FALSE,main = label,adj=1)
   # old version:
   # arcplot(M, lwd.arcs=edgesCon, col.arcs = colors, col.nodes = colNodes, labels=sub("=.*","",labelsNodes),
   #         ordering=ordV, col.labels=colsLabs, cex.labels=0.7, font=1, lwd.nodes = nodeSize, horizontal = FALSE,main = decision,adj=1)
@@ -85,3 +91,4 @@ visuArc <- function(net, decision, feature=NULL){
 #vis<-visunet(ros$main)
 #visuArc(vis,'autism',feature='ZSCAN18')
 #visuArc(vis,'Asian')
+
