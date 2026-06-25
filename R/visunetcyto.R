@@ -238,10 +238,33 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
     if (net_name!="all"){
       #edge_ids = data[[net_name]]$edges$id
       node_ids <- data[[net_name]]$nodes$id
-      createSubnetwork(nodes=node_ids, nodes.by.col  = "id",
+      sub_suid<-createSubnetwork(nodes=node_ids, nodes.by.col  = "id",
                        subnetwork.name=net_name, network=net_suid)
       # createSubnetwork(edges=edge_ids, edges.by.col = "id",
       #                  subnetwork.name=net_name, network=net_suid)
+      setCurrentNetwork(network = sub_suid)
+
+      # This allows getNodePosition to find the nodes
+
+      positions <- getNodePosition(node.names = NULL)
+
+      x_coords <- as.numeric(unlist(positions$x))
+      y_coords <- as.numeric(unlist(positions$y))
+
+      if (length(x_coords) > 0 && !any(is.na(x_coords))) {
+        x_center <- (max(x_coords) + min(x_coords)) / 2
+        y_top <- min(y_coords) - 100
+
+        addAnnotationText(
+          text = net_name,
+          x.pos = x_center,
+          y.pos = y_top,
+          fontSize = 30
+        )
+      } else {
+        message(paste("Warning: Could not determine positions for", net_name))
+      }
+      fitContent()
     }
   }
   return(data)

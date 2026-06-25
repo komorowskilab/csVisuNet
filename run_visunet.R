@@ -3,7 +3,7 @@ library(devtools)
 library(RCy3)
 
 # load version of VisuNet
-load_all("~/Documents/GitHub/VisuNet.v.1.1")
+devtools::load_all("~/Documents/Jan/VisuNet/GithUb/VisuNet.v.1.1")
 
 ros <- rosetta(autcon)
 # VisuNet with GO annotations
