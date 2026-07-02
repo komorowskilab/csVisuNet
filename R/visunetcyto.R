@@ -228,7 +228,7 @@ visunetcyto = function(ruleSet, title="VisuNet_Networks", type ="RDF",
 
   message("Applying layout...")
   message("")
-  layoutNetwork("force-directed-cl", network)
+  layoutNetwork("force-directed", network)
 
 
   #filters -- New --
