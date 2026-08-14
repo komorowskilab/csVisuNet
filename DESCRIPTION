@@ -36,8 +36,7 @@ Remotes:
     datastorm-open/visNetwork,
     komorowskilab/R.ROSETTA,
     nik01010/dashboardthemes,
-    gastonstat/arcdiagram,
-    YuLab-SMU/clusterProfiler
+    gastonstat/arcdiagram
 RoxygenNote: 7.3.3
 Suggests: 
     knitr,
