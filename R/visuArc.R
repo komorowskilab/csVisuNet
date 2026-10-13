@@ -18,7 +18,7 @@ visuArc <- function(net, decision, feature=NULL,label=NULL){
   # library(arcdiagram)
 
   #make df:  a data frame containing network connection in columns
- # df<- eval(parse(text=paste("net$", decision,'$nodes' ,sep = "")))
+  # df<- eval(parse(text=paste("net$", decision,'$nodes' ,sep = "")))
   df<-net[[decision]][['nodes']]
   cols_select<- c('label','DiscState','NodeConnection')
   df<- subset(df,select = cols_select)
@@ -47,14 +47,26 @@ visuArc <- function(net, decision, feature=NULL,label=NULL){
   edges2 <- edges[indx,]
   M <- as.matrix(edges2[,1:2])
 
+  flip_idx <- which(M[, "to"] == paste0(decision,"_",feature2,"=",discLev))
+
+  # for connections that start from "to"
+  if (length(flip_idx) > 0) {
+    temp_rows <- M[flip_idx, , drop = FALSE]
+    M[flip_idx, "from"] <- temp_rows[, "to"]
+    M[flip_idx, "to"]   <- temp_rows[, "from"]
+  }
+
   #colors
   valsCols <- round(edges2$connNorm, digits = 1)*10
   # --- Mattias: Changed this so normConn = 1 is sorted correctly
-  edgesCon <- as.integer(factor(valsCols, levels = sort(unique(valsCols))))
+  #edgesCon <- as.integer(factor(valsCols, levels = sort(unique(valsCols))))
+  edgesCon <- as.numeric(as.factor(as.character(valsCols)))
   # old version:
   # edgesCon <- as.numeric(as.factor(as.character(valsCols)))
   colors <- colorRampPalette(c("gainsboro","lavender","darkorchid3"))(length(unique(valsCols)))[edgesCon]
   labelsNodes <- unique(c(t(M)))
+
+
   colNodes <- c("#56B4E9","#999999","#E69F00")[as.numeric(sub(".*=","",labelsNodes))] #EDIT THIS WITH YOUR COLOR CODING
 
   #nodes values

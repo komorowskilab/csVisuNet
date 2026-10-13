@@ -4,7 +4,7 @@
 \alias{visuArc}
 \title{VisuArc: An arcdiagram for VisuNet diagram}
 \usage{
-visuArc(net, decision, feature = NULL)
+visuArc(net, decision, feature = NULL, label = NULL)
 }
 \arguments{
 \item{net}{The saved VisuNet object}
